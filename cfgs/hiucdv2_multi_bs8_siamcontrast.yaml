@@ -1,0 +1,74 @@
+TRAIN:
+    CKPT: experiment/hiucdv2
+    WORKERS: 1
+    BATCH_SIZE: 8
+    LOAD_PATH: ''
+    DATASETS: Hi-UCDv2
+    VAL: False
+    DEVICE_IDS: [0]
+    SEED: 1
+MODEL:
+    type: SiamContrast
+    encoder_name: resnet34
+    encoder_depth: 4
+    encoder_weights: imagenet
+    decoder_pyramid_channels: 128
+    decoder_segmentation_channels: 64
+    decoder_merge_policy: cat
+    decoder_dropout: 0.2
+    upsampling: 2
+    in_channels: 3
+    out_channels: 3
+CD_LOSS:
+    TYPE: softmax
+    WEIGHT: [1.0, 1.0, 1.0]
+    IGNORE: 0
+SEG_LOSS:
+    RATIO: 1.0
+    BINARY: False
+    TYPE: ce_aux_contrast
+    IGNORE: 0
+    proj_dim: 128
+    upsample:
+    loss_weight: 0.05
+    temperature: 0.1
+    base_temperature: 0.07
+    max_samples: 1024
+    max_views: 100
+    hard_mode: pred  # pred | aux
+    mode: crosstbase2
+    crosstbase2_weight: [1.0, 1.0]
+    crosst_hard_mode: pred_cd
+    corsst_params:
+        temperature: 0.1
+        base_temperature: 0.07
+        max_samples: 1024
+        max_views: 50
+        drop_one_class: False
+        IGNORE: 0
+SOLVER:
+    MAX_ITER: 80000
+    LR_STEPS: [50000, 70000]
+    LR_MULTS: [0.1, 0.1]
+    SNAPSHOT: 2500
+    BASE_LR: 0.01
+    OPTIM: SGD
+    MOMENTUM: 0.9
+    WEIGHT_DECAY: 0.0004
+    WARMUP_STEPS: 0
+    WARMUP_LR: 0.0004
+    PRINT_FREQ: 10
+AUG:
+    RANDOM_ROTATION: True
+    RANDOM_HFLIP: True
+FEAT:
+    DEVICE_IDS: [0]
+    DATALIST: test
+    ITER: 20000
+TEST:
+    DEVICE_IDS: [0]
+    DATALIST: test
+    SAVE_VIS: True
+    ITER:
+        START: 10000
+        END: 80000
